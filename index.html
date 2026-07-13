@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Your Name — Training Log</title>
+<meta name="description" content="A public log of learning AI and building projects, one checkpoint at a time.">
+
+<!-- 
+  HOW THIS FILE IS ORGANIZED (read this if you're new to HTML/CSS):
+  1. <style> block below = all the visual design (colors, fonts, layout)
+  2. <body> below that = the actual content (edit THIS to make it yours)
+  3. <script> at the bottom = tiny bit of interactivity (scroll reveal + chatbot demo)
+
+  TO MAKE THIS YOURS:
+  - Search for "EDIT ME" comments throughout — those mark placeholder content
+  - Replace "Your Name" with your actual name (appears a few times)
+  - Add real project checkpoints in the #log section
+  - Deploy for free on GitHub Pages: create a repo, upload this as index.html,
+    turn on Pages in repo Settings > Pages > select main branch.
+-->
+
+<style>
+  :root {
+    /* ---- Design tokens ---- */
+    --paper: #F2F1EC;       /* graphite-tinted paper, not warm cream */
+    --paper-raised: #E9E7DF;
+    --ink: #1C1F2A;         /* near-black navy ink */
+    --ink-soft: #55596B;    /* secondary text */
+    --gold: #B98900;        /* checkpoint / accent */
+    --teal: #1F6F6F;        /* links, active state */
+    --line: #D8D6CC;        /* hairline rules */
+    --shipped: #1F6F6F;
+    --progress: #B98900;
+    --planned: #8A8D9A;
+  }
+
+  * { box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    margin: 0;
+    background: var(--paper);
+    color: var(--ink);
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  h1, h2, h3 {
+    font-family: 'Fraunces', Georgia, serif;
+    font-weight: 600;
+    margin: 0;
+    letter-spacing: -0.01em;
+  }
+
+  .mono {
+    font-family: 'IBM Plex Mono', 'Courier New', monospace;
+  }
+
+  a { color: var(--teal); }
+
+  .wrap {
+    max-width: 780px;
+    margin: 0 auto;
+    padding: 0 24px;
+  }
+
+  /* ---- Nav ---- */
+  nav {
+    position: sticky;
+    top: 0;
+    background: rgba(242, 241, 236, 0.92);
+    backdrop-filter: blur(6px);
+    border-bottom: 1px solid var(--line);
+    z-index: 10;
+  }
+  nav .wrap {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 14px;
+    padding-bottom: 14px;
+  }
+  .nav-brand {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 14px;
+    color: var(--ink-soft);
+  }
+  .nav-links {
+    display: flex;
+    gap: 24px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 13px;
+  }
+  .nav-links a {
+    text-decoration: none;
+    color: var(--ink);
+  }
+  .nav-links a:hover { color: var(--teal); }
+
+  /* ---- Hero ---- */
+  .hero {
+    padding: 96px 0 64px;
+  }
+  .hero-tag {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 13px;
+    color: var(--gold);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-bottom: 20px;
+    display: inline-block;
+  }
+  .hero h1 {
+    font-size: clamp(36px, 6vw, 56px);
+    line-height: 1.08;
+    max-width: 11ch;
+  }
+  .hero p.lede {
+    margin-top: 24px;
+    max-width: 52ch;
+    font-size: 18px;
+    color: var(--ink-soft);
+  }
+  .hero-actions {
+    margin-top: 32px;
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+  .btn {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 13px;
+    padding: 11px 20px;
+    border-radius: 3px;
+    text-decoration: none;
+    display: inline-block;
+    border: 1px solid var(--ink);
+  }
+  .btn-primary {
+    background: var(--ink);
+    color: var(--paper);
+  }
+  .btn-primary:hover { background: var(--teal); border-color: var(--teal); color: white; }
+  .btn-ghost {
+    color: var(--ink);
+    border-color: var(--line);
+  }
+  .btn-ghost:hover { border-color: var(--ink); }
+
+  /* ---- Section headers ---- */
+  section { padding: 56px 0; }
+  .section-head {
+    display: flex;
+    align-items: baseline;
+    gap: 14px;
+    margin-bottom: 36px;
+    border-bottom: 1px solid var(--line);
+    padding-bottom: 16px;
+  }
+  .section-head .idx {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 13px;
+    color: var(--ink-soft);
+  }
+  .section-head h2 { font-size: 26px; }
+
+  /* ---- About ---- */
+  .about-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 32px;
+  }
+  .about p { color: var(--ink-soft); max-width: 62ch; }
+
+  .stack-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 8px;
+  }
+  .stack-item {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 12.5px;
+    background: var(--paper-raised);
+    border: 1px solid var(--line);
+    padding: 6px 12px;
+    border-radius: 3px;
+    color: var(--ink);
+  }
+
+  /* ---- The Log (checkpoint timeline) — signature element ---- */
+  #log { position: relative; }
+  .log-rail {
+    position: relative;
+    padding-left: 32px;
+  }
+  .log-rail::before {
+    content: "";
+    position: absolute;
+    left: 6px;
+    top: 6px;
+    bottom: 6px;
+    width: 1px;
+    background: var(--line);
+  }
+  .checkpoint {
+    position: relative;
+    margin-bottom: 40px;
+    opacity: 0;
+    transform: translateY(12px);
+    transition: opacity 0.6s ease, transform 0.6s ease;
+  }
+  .checkpoint.visible { opacity: 1; transform: translateY(0); }
+  .checkpoint::before {
+    content: "";
+    position: absolute;
+    left: -32px;
+    top: 6px;
+    width: 11px;
+    height: 11px;
+    border-radius: 50%;
+    background: var(--paper);
+    border: 2px solid var(--ink-soft);
+  }
+  .checkpoint[data-status="shipped"]::before { border-color: var(--shipped); background: var(--shipped); }
+  .checkpoint[data-status="progress"]::before {
+    border-color: var(--progress);
+    background: var(--paper);
+    animation: pulse 2s ease-in-out infinite;
+  }
+  @keyframes pulse {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(185,137,0,0.35); }
+    50% { box-shadow: 0 0 0 5px rgba(185,137,0,0); }
+  }
+
+  .checkpoint-meta {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 12px;
+    color: var(--ink-soft);
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    margin-bottom: 6px;
+  }
+  .status-tag {
+    padding: 2px 8px;
+    border-radius: 20px;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+  .status-tag.shipped { background: rgba(31,111,111,0.12); color: var(--shipped); }
+  .status-tag.progress { background: rgba(185,137,0,0.14); color: var(--progress); }
+  .status-tag.planned { background: rgba(138,141,154,0.15); color: var(--planned); }
+
+  .checkpoint h3 { font-size: 20px; margin-bottom: 8px; }
+  .checkpoint p { color: var(--ink-soft); max-width: 60ch; }
+  .checkpoint-links {
+    margin-top: 10px;
+    display: flex;
+    gap: 16px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 12.5px;
+  }
+  .checkpoint-links a { text-decoration: none; }
+  .checkpoint-links a:hover { text-decoration: underline; }
+
+  /* ---- Demo box (mini AI chat placeholder) ---- */
+  .demo-box {
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    background: var(--paper-raised);
+    padding: 20px;
+    margin-top: 14px;
+  }
+  .demo-box .demo-label {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    color: var(--ink-soft);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    margin-bottom: 10px;
+  }
+  .demo-row { display: flex; gap: 8px; }
+  .demo-row input {
+    flex: 1;
+    padding: 10px 12px;
+    border: 1px solid var(--line);
+    border-radius: 4px;
+    background: var(--paper);
+    font-family: 'Inter', sans-serif;
+    font-size: 14px;
+  }
+  .demo-row button {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 13px;
+    padding: 0 18px;
+    border: 1px solid var(--ink);
+    background: var(--ink);
+    color: var(--paper);
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  .demo-output {
+    margin-top: 12px;
+    font-size: 14px;
+    color: var(--ink-soft);
+    min-height: 20px;
+  }
+
+  /* ---- Contact ---- */
+  .contact-links {
+    display: flex;
+    gap: 24px;
+    flex-wrap: wrap;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 14px;
+    margin-top: 18px;
+  }
+  .contact-links a { text-decoration: none; }
+  .contact-links a:hover { text-decoration: underline; }
+
+  footer {
+    border-top: 1px solid var(--line);
+    padding: 28px 0;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 12px;
+    color: var(--ink-soft);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .checkpoint { transition: none; opacity: 1; transform: none; }
+    .checkpoint[data-status="progress"]::before { animation: none; }
+    html { scroll-behavior: auto; }
+  }
+
+  @media (max-width: 600px) {
+    .nav-links { gap: 14px; font-size: 12px; }
+    .hero { padding: 64px 0 40px; }
+  }
+</style>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500&family=Inter:wght@400;500&display=swap" rel="stylesheet">
+</head>
+
+<body>
+
+<nav>
+  <div class="wrap">
+    <span class="nav-brand">// your_name.log</span>
+    <div class="nav-links">
+      <a href="#about">about</a>
+      <a href="#log">checkpoints</a>
+      <a href="#contact">contact</a>
+    </div>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="wrap">
+    <!-- EDIT ME: your tagline -->
+    <span class="hero-tag">epoch_2026 — in training</span>
+    <h1>Your Name</h1>
+    <p class="lede">
+      I'm learning to build with AI in public. This page is my training log —
+      every project below is a real checkpoint, not a tutorial screenshot.
+    </p>
+    <div class="hero-actions">
+      <a class="btn btn-primary" href="#log">See the log</a>
+      <a class="btn btn-ghost" href="mailto:your@email.com">Get in touch</a>
+    </div>
+  </div>
+</header>
+
+<section id="about">
+  <div class="wrap">
+    <div class="section-head">
+      <span class="idx mono">01</span>
+      <h2>About</h2>
+    </div>
+    <div class="about-grid">
+      <div class="about">
+        <!-- EDIT ME: your real background/story, 2-3 sentences -->
+        <p>
+          I'm learning applied AI from the ground up — starting with how large language
+          models work, how to build with their APIs, and how to ship small, real tools
+          rather than just reading about it. This site tracks that process openly:
+          what I built, what broke, and what I learned.
+        </p>
+        <p>
+          Currently focused on: prompting and API integration, basic Python,
+          and understanding how AI products get put in front of real users.
+        </p>
+        <div class="stack-list">
+          <!-- EDIT ME: swap in what you're actually learning/using -->
+          <span class="stack-item">HTML/CSS</span>
+          <span class="stack-item">Claude API</span>
+          <span class="stack-item">Python (learning)</span>
+          <span class="stack-item">Prompt design</span>
+          <span class="stack-item">Git / GitHub Pages</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="log">
+  <div class="wrap">
+    <div class="section-head">
+      <span class="idx mono">02</span>
+      <h2>Checkpoints</h2>
+    </div>
+
+    <div class="log-rail">
+
+      <!-- EDIT ME: replace with your real first project -->
+      <div class="checkpoint" data-status="progress">
+        <div class="checkpoint-meta">
+          <span class="status-tag progress">in progress</span>
+          <span>checkpoint_001</span>
+        </div>
+        <h3>AI assistant for this site</h3>
+        <p>
+          A small chat widget (below) that can answer questions about my background,
+          built on a language model API. Right now it's a static demo — next step is
+          wiring it to a real API endpoint.
+        </p>
+        <div class="demo-box">
+          <div class="demo-label">Live demo (static placeholder)</div>
+          <div class="demo-row">
+            <input type="text" id="demo-input" placeholder="Ask something about me...">
+            <button onclick="runDemo()">Ask</button>
+          </div>
+          <div class="demo-output" id="demo-output"></div>
+        </div>
+        <div class="checkpoint-links">
+          <a href="#">View code &rarr;</a>
+        </div>
+      </div>
+
+      <!-- EDIT ME: second project -->
+      <div class="checkpoint" data-status="planned">
+        <div class="checkpoint-meta">
+          <span class="status-tag planned">planned</span>
+          <span>checkpoint_002</span>
+        </div>
+        <h3>Text summarizer tool</h3>
+        <p>
+          A simple page where you paste in an article and get a short summary back,
+          using an AI API. Goal: understand how to send prompts and handle responses
+          in real code, not just in a chat window.
+        </p>
+        <div class="checkpoint-links">
+          <a href="#">Coming soon</a>
+        </div>
+      </div>
+
+      <!-- EDIT ME: third project -->
+      <div class="checkpoint" data-status="planned">
+        <div class="checkpoint-meta">
+          <span class="status-tag planned">planned</span>
+          <span>checkpoint_003</span>
+        </div>
+        <h3>Something I haven't decided yet</h3>
+        <p>
+          Leave this one open on purpose — as I learn more, I'll pick a project
+          that actually solves something real, and log it here.
+        </p>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<section id="contact">
+  <div class="wrap">
+    <div class="section-head">
+      <span class="idx mono">03</span>
+      <h2>Contact</h2>
+    </div>
+    <p style="color: var(--ink-soft); max-width: 52ch;">
+      Open to entry-level roles and internships where I can keep learning AI
+      hands-on. Reach out any time.
+    </p>
+    <div class="contact-links">
+      <!-- EDIT ME: your real links -->
+      <a href="mailto:your@email.com">email</a>
+      <a href="https://github.com/yourname" target="_blank">github</a>
+      <a href="https://linkedin.com/in/yourname" target="_blank">linkedin</a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    built by hand, logged in public — updated 2026
+  </div>
+</footer>
+
+<script>
+  // Reveal each checkpoint as it scrolls into view.
+  const checkpoints = document.querySelectorAll('.checkpoint');
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) entry.target.classList.add('visible');
+    });
+  }, { threshold: 0.15 });
+  checkpoints.forEach(cp => observer.observe(cp));
+
+  // Placeholder chat demo. This does NOT call a real AI yet —
+  // it just shows canned responses so visitors see how it will work.
+  // To make it real: create a small backend (or serverless function)
+  // that calls the Anthropic API, and fetch() it from here instead
+  // of using this canned lookup. Never put an API key directly in
+  // this HTML file — it would be visible to anyone who views the page source.
+  function runDemo() {
+    const input = document.getElementById('demo-input');
+    const output = document.getElementById('demo-output');
+    const q = input.value.trim();
+    if (!q) return;
+    output.textContent = "…";
+    setTimeout(() => {
+      output.textContent = "This is a placeholder response. Wire this up to a real AI API to make it live — see the code comment above.";
+    }, 500);
+  }
+</script>
+
+</body>
+</html>
